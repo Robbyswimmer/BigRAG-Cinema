@@ -1,0 +1,54 @@
+# =============================================================================
+# BigRAG Cinema -- Cluster Profile: LOCAL
+# =============================================================================
+# Single-machine development profile.  Uses local[*] master so Spark runs
+# entirely within the driver JVM.  Suitable for iterating on logic before
+# submitting to a real cluster.
+#
+# Usage:
+#     python scripts/run_benchmarks.py --profile local
+# =============================================================================
+
+profile_name: local
+description: "Single-machine local mode for development and testing"
+
+spark:
+  master: "local[*]"
+  app_name: "BigRAG-Cinema-Local"
+
+  driver:
+    memory: "4g"
+    cores: 2
+    max_result_size: "2g"
+
+  executor:
+    memory: "4g"
+    cores: 2
+    instances: 1          # ignored in local mode, kept for schema parity
+
+  sql:
+    shuffle_partitions: 8               # small value for local runs
+    adaptive_enabled: true
+    parquet_compression: "snappy"
+    arrow_enabled: true                 # fast Pandas <-> Spark transfers
+
+  serializer: "org.apache.spark.serializer.KryoSerializer"
+  default_parallelism: 8
+
+  ui:
+    enabled: true
+    port: 4040
+
+  event_log:
+    enabled: false
+    dir: "/tmp/spark-events"
+
+# ---- Resource caps (guard-rails for laptops) ---------------------------------
+resource_limits:
+  max_driver_memory_gb: 8
+  max_total_cores: 8
+
+# ---- Extra JVM options -------------------------------------------------------
+extra_java_options: >-
+  -XX:+UseG1GC
+  -XX:InitiatingHeapOccupancyPercent=35

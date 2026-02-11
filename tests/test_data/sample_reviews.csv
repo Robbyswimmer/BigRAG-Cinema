@@ -1,0 +1,6 @@
+rating,title,text,asin,parent_asin,user_id,timestamp,helpful_vote,verified_purchase
+5.0,Good Quality Dog Food,I have bought several of the Vitality canned dog food products and have found them all to be of good quality.,B001E4KFG0,B001E4KFG0,A3SGXH7AUHU8GW,1303862400,1,true
+1.0,Not as Advertised,"Product arrived labeled as Jumbo Salted Peanuts...the peanuts were actually small sized unsalted.",B00813GRG4,B00813GRG4,A1D87F6ZCVE5NK,1346976000,0,true
+4.0,Delicious!,"This is a confection that has been around a few centuries. Great taffy at a great price.",B000LQOCH0,B000LQOCH0,ABXLMWJIXXAIN,1219017600,1,true
+2.0,Cough Medicine,"If you are looking for the secret ingredient in Robitussin I believe I have found it.",B000UA0QIQ,B000UA0QIQ,A395BORC6FGVXV,1307923200,3,false
+5.0,Great taffy,Great taffy at a great price. There is a wide assortment of yummy taffy.,B006K2ZZ7K,B006K2ZZ7K,A1UQRSCLF8GW1T,1350777600,0,true

@@ -1,0 +1,45 @@
+# Data directories (large files)
+data/raw/*
+data/processed/*
+data/embeddings/*
+data/parquet/*
+!data/**/.gitkeep
+
+# Results (regenerable)
+results/raw_metrics/*
+!results/**/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Spark
+spark-warehouse/
+metastore_db/
+derby.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

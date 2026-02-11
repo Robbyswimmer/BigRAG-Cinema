@@ -1,0 +1,84 @@
+# =============================================================================
+# BigRAG Cinema -- Cluster Profile: CLUSTER_FULL
+# =============================================================================
+# Production / full-scale cluster profile.  Designed for a multi-node Spark
+# cluster managed by YARN, Kubernetes, or Standalone scheduler.
+#
+# TODO: Replace placeholder values with real cluster coordinates before use.
+#
+# Usage:
+#     python scripts/run_benchmarks.py --profile cluster_full
+# =============================================================================
+
+profile_name: cluster_full
+description: "Multi-node cluster mode for full-scale benchmarking"
+
+spark:
+  # -- Set master to your cluster manager endpoint.
+  # Examples:
+  #   YARN:        "yarn"
+  #   Standalone:  "spark://master-host:7077"
+  #   Kubernetes:  "k8s://https://<k8s-api-server>:6443"
+  master: "yarn"                       # <-- CHANGE ME
+  deploy_mode: "client"                # client | cluster
+  app_name: "BigRAG-Cinema-ClusterFull"
+
+  driver:
+    memory: "8g"
+    cores: 4
+    max_result_size: "4g"
+
+  executor:
+    memory: "8g"
+    cores: 4
+    instances: 8                       # adjust to cluster size
+
+  sql:
+    shuffle_partitions: 200
+    adaptive_enabled: true
+    adaptive_coalesce_partitions: true
+    parquet_compression: "snappy"
+    arrow_enabled: true
+
+  serializer: "org.apache.spark.serializer.KryoSerializer"
+  default_parallelism: 64
+
+  # -- Dynamic allocation (optional, YARN / K8s) ------------------------------
+  dynamic_allocation:
+    enabled: false                     # set true to let Spark scale executors
+    min_executors: 2
+    max_executors: 16
+    initial_executors: 8
+
+  ui:
+    enabled: true
+    port: 4040
+
+  event_log:
+    enabled: true
+    dir: "hdfs:///spark-events"        # <-- CHANGE ME to your HDFS / S3 path
+
+# ---- Network / security (placeholder) ---------------------------------------
+network:
+  # Uncomment if the cluster requires explicit bind addresses or encryption.
+  # spark.driver.host: "10.0.0.1"
+  # spark.network.crypto.enabled: true
+  # spark.authenticate: true
+
+# ---- Resource caps -----------------------------------------------------------
+resource_limits:
+  max_driver_memory_gb: 16
+  max_executor_memory_gb: 16
+  max_total_cores: 128
+
+# ---- Extra JVM options -------------------------------------------------------
+extra_java_options: >-
+  -XX:+UseG1GC
+  -XX:InitiatingHeapOccupancyPercent=35
+  -Dio.netty.tryReflectionSetAccessible=true
+
+# ---- YARN-specific (ignored by other schedulers) -----------------------------
+yarn:
+  queue: "default"                     # <-- CHANGE ME
+  # spark.yarn.dist.archives: ""
+  # spark.yarn.appMasterEnv.PYSPARK_PYTHON: "/usr/bin/python3"
