@@ -7,7 +7,7 @@ Ensures that incoming DataFrames conform to the expected schema
 
 from __future__ import annotations
 
-import pandas as pd
+from typing import TYPE_CHECKING
 
 from bigrag.data.schema import (
     COL_HELPFUL_VOTE,
@@ -18,6 +18,10 @@ from bigrag.data.schema import (
     COL_VERIFIED_PURCHASE,
     EXPECTED_COLUMNS,
 )
+
+if TYPE_CHECKING:
+    import pandas as pd
+
 
 def validate_dataframe(df: "pd.DataFrame") -> tuple:
     """Validate *df* against the canonical schema and deduplicate rows.
@@ -34,6 +38,8 @@ def validate_dataframe(df: "pd.DataFrame") -> tuple:
         is the validated / deduplicated DataFrame and *report* is a dict
         of validation statistics (rows dropped, issues found, etc.).
     """
+    import pandas as pd
+
     missing_columns = [c for c in EXPECTED_COLUMNS if c not in df.columns]
     if missing_columns:
         raise ValueError(f"DataFrame is missing required columns: {missing_columns}")

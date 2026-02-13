@@ -9,6 +9,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from pyspark.sql import functions as F
+
+from bigrag.engine.vector_search import top_k_similar
 from bigrag.strategies.base import ExecutionStrategy
 
 if TYPE_CHECKING:
@@ -27,4 +30,8 @@ class VectorFirstStrategy(ExecutionStrategy):
         top_k: int,
     ) -> "DataFrame":
         """Rank by cosine similarity, then apply metadata filters."""
-        raise NotImplementedError("VectorFirstStrategy.execute is not yet implemented")
+        pre_k = max(top_k * 10, 100)
+        vector_ranked = top_k_similar(df, query_vec=query_vec, k=pre_k)
+        if filters is not None:
+            vector_ranked = vector_ranked.filter(filters)
+        return vector_ranked.orderBy(F.col("similarity").desc()).limit(top_k)

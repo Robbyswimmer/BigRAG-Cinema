@@ -10,10 +10,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
 from bigrag.data.schema import COL_TEXT, EMBEDDING_DIM
-from bigrag.data.validator import validate_dataframe
 
 
 def generate_embeddings(
@@ -42,6 +40,10 @@ def generate_embeddings(
     if texts is None:
         if input_path is None:
             raise ValueError("Provide either `texts` or `input_path`.")
+        import pandas as pd
+
+        from bigrag.data.validator import validate_dataframe
+
         csv_path = Path(input_path).expanduser().resolve()
         if not csv_path.exists():
             raise FileNotFoundError(f"Input CSV not found: {csv_path}")
