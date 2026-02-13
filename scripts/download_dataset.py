@@ -5,7 +5,14 @@ Thin CLI wrapper around bigrag.data.downloader.
 """
 
 import argparse
+from pathlib import Path
 import sys
+
+# Allow running this script without `pip install -e .`
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+SRC_DIR = PROJECT_ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 
 
 def parse_args():

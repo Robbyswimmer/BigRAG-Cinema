@@ -7,7 +7,10 @@ with optional schema validation and environment-variable interpolation.
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
+
+import yaml
 
 
 def load_config(path: Path) -> dict:
@@ -28,4 +31,12 @@ def load_config(path: Path) -> dict:
     FileNotFoundError
         If *path* does not exist.
     """
-    raise NotImplementedError("load_config is not yet implemented")
+    config_path = Path(path).expanduser().resolve()
+    if not config_path.exists():
+        raise FileNotFoundError(f"Configuration file does not exist: {config_path}")
+
+    rendered = os.path.expandvars(config_path.read_text(encoding="utf-8"))
+    parsed = yaml.safe_load(rendered) or {}
+    if not isinstance(parsed, dict):
+        raise ValueError(f"Configuration file must parse to a dictionary: {config_path}")
+    return parsed

@@ -7,7 +7,10 @@ and log levels defined in an external YAML/dict configuration.
 
 from __future__ import annotations
 
+import logging.config
 from pathlib import Path
+
+import yaml
 
 
 def setup_logging(config_path: Path) -> None:
@@ -23,4 +26,15 @@ def setup_logging(config_path: Path) -> None:
     -------
     None
     """
-    raise NotImplementedError("setup_logging is not yet implemented")
+    path = Path(config_path).expanduser().resolve()
+    if not path.exists():
+        raise FileNotFoundError(f"Logging config does not exist: {path}")
+
+    config = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    handlers = config.get("handlers", {})
+    for handler in handlers.values():
+        filename = handler.get("filename")
+        if filename:
+            Path(filename).expanduser().resolve().parent.mkdir(parents=True, exist_ok=True)
+
+    logging.config.dictConfig(config)

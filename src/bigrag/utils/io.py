@@ -12,6 +12,8 @@ import json
 from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
+import numpy as np
+
 if TYPE_CHECKING:
     import pandas as pd
 
@@ -31,7 +33,10 @@ def resolve_path(raw: str, base: Path | None = None) -> Path:
     Path
         Fully resolved absolute path.
     """
-    raise NotImplementedError("resolve_path is not yet implemented")
+    candidate = Path(raw).expanduser()
+    if not candidate.is_absolute() and base is not None:
+        candidate = Path(base).expanduser() / candidate
+    return candidate.resolve()
 
 
 def read_parquet(path: Path) -> "pd.DataFrame":
@@ -47,7 +52,12 @@ def read_parquet(path: Path) -> "pd.DataFrame":
     pandas.DataFrame
         The loaded DataFrame.
     """
-    raise NotImplementedError("read_parquet is not yet implemented")
+    import pandas as pd
+
+    parquet_path = Path(path).expanduser().resolve()
+    if not parquet_path.exists():
+        raise FileNotFoundError(f"Parquet file does not exist: {parquet_path}")
+    return pd.read_parquet(parquet_path)
 
 
 def save_json(data: Any, path: Path, indent: int = 2) -> None:
@@ -64,4 +74,18 @@ def save_json(data: Any, path: Path, indent: int = 2) -> None:
     indent : int
         JSON indentation level.
     """
-    raise NotImplementedError("save_json is not yet implemented")
+    output_path = Path(path).expanduser().resolve()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    class _Encoder(json.JSONEncoder):
+        def default(self, o: Any) -> Any:
+            if isinstance(o, Path):
+                return str(o)
+            if isinstance(o, np.ndarray):
+                return o.tolist()
+            if isinstance(o, np.generic):
+                return o.item()
+            return super().default(o)
+
+    with output_path.open("w", encoding="utf-8") as f:
+        json.dump(data, f, indent=indent, cls=_Encoder, ensure_ascii=False)

@@ -8,10 +8,32 @@ delegates to the matching ExecutionStrategy to produce results.
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Optional, TYPE_CHECKING
+
+from bigrag.data.embedder import generate_embeddings
+from bigrag.engine.metadata_filter import build_filters
+from bigrag.engine.vector_search import top_k_similar
+from bigrag.strategies.registry import get_strategy
 
 if TYPE_CHECKING:
     from pyspark.sql import DataFrame, SparkSession
+
+DEFAULT_DATA_PATHS = (
+    Path("data/processed/reviews.parquet"),
+    Path("data/movies_with_embeddings.parquet"),
+)
+
+
+def _load_default_df(spark: "SparkSession") -> "DataFrame":
+    for path in DEFAULT_DATA_PATHS:
+        candidate = path.expanduser().resolve()
+        if candidate.exists():
+            return spark.read.parquet(str(candidate))
+    raise FileNotFoundError(
+        "No default parquet dataset found. Checked: "
+        + ", ".join(str(p.expanduser().resolve()) for p in DEFAULT_DATA_PATHS)
+    )
 
 
 def execute_query(
@@ -42,4 +64,31 @@ def execute_query(
     pyspark.sql.DataFrame
         Top-K results sorted by relevance.
     """
-    raise NotImplementedError("execute_query is not yet implemented")
+    if top_k <= 0:
+        raise ValueError("top_k must be positive")
+
+    query_vec = generate_embeddings(texts=[text])[0].tolist()
+    spec = filters or {}
+    filter_expr = build_filters(
+        time_range=spec.get("time_range"),
+        score_range=spec.get("score_range"),
+        user_ids=spec.get("user_ids"),
+    )
+
+    df = _load_default_df(spark)
+
+    if strategy_name:
+        try:
+            strategy = get_strategy(strategy_name)
+            return strategy.execute(
+                spark=spark,
+                df=df,
+                query_vec=query_vec,
+                filters=filter_expr,
+                top_k=top_k,
+            )
+        except NotImplementedError:
+            # Strategy implementations are completed in Phase 3.
+            pass
+
+    return top_k_similar(df.filter(filter_expr), query_vec=query_vec, k=top_k)

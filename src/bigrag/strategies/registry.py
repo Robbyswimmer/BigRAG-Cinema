@@ -42,4 +42,8 @@ def get_strategy(name: str) -> ExecutionStrategy:
     KeyError
         If *name* is not found in ``STRATEGY_REGISTRY``.
     """
-    raise NotImplementedError("get_strategy is not yet implemented")
+    key = name.strip().lower()
+    if key not in STRATEGY_REGISTRY:
+        available = ", ".join(sorted(STRATEGY_REGISTRY.keys()))
+        raise KeyError(f"Unknown strategy '{name}'. Available strategies: {available}")
+    return STRATEGY_REGISTRY[key]()
