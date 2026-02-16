@@ -5,7 +5,14 @@ Thin CLI wrapper around bigrag.benchmark.experiment_runner.
 """
 
 import argparse
+from pathlib import Path
 import sys
+
+# Allow running this script without `pip install -e .`
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+SRC_DIR = PROJECT_ROOT / "src"
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 
 
 def parse_args():
@@ -15,8 +22,8 @@ def parse_args():
     parser.add_argument(
         "--config",
         type=str,
-        default="configs/benchmark.yaml",
-        help="Path to benchmark configuration file (default: configs/benchmark.yaml)",
+        default="conf/experiment_config.yaml",
+        help="Path to benchmark configuration file (default: conf/experiment_config.yaml)",
     )
     parser.add_argument(
         "--output-dir",

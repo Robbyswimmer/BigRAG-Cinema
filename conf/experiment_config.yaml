@@ -10,7 +10,7 @@
 # Fractions of the full dataset to benchmark against.  Each fraction produces
 # its own set of timing / quality measurements so we can plot scale curves.
 dataset:
-  source_path: "data/movies_with_embeddings.parquet"
+  source_path: "data/processed/reviews.parquet"
   fractions: [0.01, 0.05, 0.1, 0.25, 0.5, 1.0]
 
 # ---- Embedding model ---------------------------------------------------------
@@ -29,24 +29,21 @@ queries:
 # ---- Retrieval strategies to compare ----------------------------------------
 # Each strategy is executed for every (fraction, num_queries) combination.
 strategies:
-  - name: "brute_force_cosine"
-    description: "Exact cosine similarity via Spark UDF"
+  - name: "filter_first"
+    description: "Apply metadata filters before vector search"
     top_k: 10
 
-  - name: "broadcast_join"
-    description: "Broadcast the query vector, join on cosine similarity"
+  - name: "vector_first"
+    description: "Run vector search globally, then apply metadata filters"
     top_k: 10
 
-  - name: "partitioned_search"
-    description: "Hash-partition embeddings, local top-k per partition, global merge"
+  - name: "hybrid_parallel"
+    description: "Run filter-first and vector-first paths then merge"
     top_k: 10
-    num_partitions: 8
 
-  - name: "lsh_approx"
-    description: "Spark ML BucketedRandomProjectionLSH approximate NN"
+  - name: "adaptive"
+    description: "Heuristic strategy selection at runtime"
     top_k: 10
-    num_hash_tables: 5
-    bucket_length: 2.0
 
 # ---- Evaluation metrics ------------------------------------------------------
 metrics:

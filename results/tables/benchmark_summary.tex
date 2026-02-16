@@ -1,0 +1,34 @@
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrrrrr}
+\hline
+Strategy & Fraction & Mean Latency (ms) & P95 Latency (ms) & Throughput (qps) & Mean Results \\
+\hline
+adaptive & 0.0100 & 72.843 & 88.230 & 13.964 & 0.000 \\
+adaptive & 0.0500 & 71.140 & 86.479 & 14.526 & 0.000 \\
+adaptive & 0.1000 & 67.846 & 77.403 & 14.807 & 0.000 \\
+adaptive & 0.2500 & 66.026 & 72.360 & 15.200 & 0.000 \\
+adaptive & 0.5000 & 64.581 & 71.090 & 15.675 & 0.000 \\
+adaptive & 1.0000 & 59.735 & 63.018 & 16.986 & 0.000 \\
+filter_first & 0.0100 & 84.893 & 118.061 & 12.924 & 0.000 \\
+filter_first & 0.0500 & 53.288 & 75.723 & 19.224 & 0.000 \\
+filter_first & 0.1000 & 44.909 & 52.278 & 22.432 & 0.000 \\
+filter_first & 0.2500 & 43.530 & 48.208 & 23.045 & 0.000 \\
+filter_first & 0.5000 & 45.677 & 55.582 & 22.636 & 0.000 \\
+filter_first & 1.0000 & 40.342 & 44.540 & 24.893 & 0.000 \\
+hybrid_parallel & 0.0100 & 103.475 & 117.317 & 9.738 & 0.000 \\
+hybrid_parallel & 0.0500 & 90.958 & 98.187 & 11.202 & 0.000 \\
+hybrid_parallel & 0.1000 & 87.949 & 107.037 & 11.454 & 0.000 \\
+hybrid_parallel & 0.2500 & 84.145 & 94.398 & 11.938 & 0.000 \\
+hybrid_parallel & 0.5000 & 85.925 & 91.942 & 11.666 & 0.000 \\
+hybrid_parallel & 1.0000 & 92.065 & 126.359 & 11.159 & 0.000 \\
+vector_first & 0.0100 & 52.619 & 60.941 & 19.255 & 0.000 \\
+vector_first & 0.0500 & 48.403 & 52.767 & 20.757 & 0.000 \\
+vector_first & 0.1000 & 47.852 & 51.884 & 20.997 & 0.000 \\
+vector_first & 0.2500 & 49.991 & 54.192 & 20.661 & 0.000 \\
+vector_first & 0.5000 & 47.585 & 51.734 & 21.353 & 0.000 \\
+vector_first & 1.0000 & 46.893 & 51.191 & 21.435 & 0.000 \\
+\hline
+\end{tabular}
+\caption{Benchmark Results}
+\end{table}
