@@ -49,6 +49,9 @@ def validate_dataframe(df: "pd.DataFrame") -> tuple:
 
     working[COL_RATING] = pd.to_numeric(working[COL_RATING], errors="coerce")
     working[COL_TIMESTAMP] = pd.to_numeric(working[COL_TIMESTAMP], errors="coerce")
+    # Amazon Reviews '23 timestamps are in milliseconds — convert to seconds.
+    if working[COL_TIMESTAMP].median() > 1e12:
+        working[COL_TIMESTAMP] = working[COL_TIMESTAMP] // 1000
     working[COL_HELPFUL_VOTE] = pd.to_numeric(working[COL_HELPFUL_VOTE], errors="coerce")
 
     bool_map = {

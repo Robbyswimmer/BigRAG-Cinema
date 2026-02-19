@@ -87,6 +87,14 @@ def create_spark_session(profile_path: Path) -> "SparkSession":
             str(bool(sql_cfg["arrow_enabled"])).lower(),
         )
 
+    mem_cfg = spark_cfg.get("memory", {})
+    if "fraction" in mem_cfg:
+        builder = builder.config("spark.memory.fraction", str(mem_cfg["fraction"]))
+    if "storage_fraction" in mem_cfg:
+        builder = builder.config(
+            "spark.memory.storageFraction", str(mem_cfg["storage_fraction"])
+        )
+
     if "serializer" in spark_cfg:
         builder = builder.config("spark.serializer", str(spark_cfg["serializer"]))
     if "default_parallelism" in spark_cfg:

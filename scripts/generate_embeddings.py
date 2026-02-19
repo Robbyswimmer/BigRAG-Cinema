@@ -22,8 +22,8 @@ def parse_args():
     parser.add_argument(
         "--input-path",
         type=str,
-        default="data/raw/Reviews.csv",
-        help="Path to the raw reviews CSV (default: data/raw/Reviews.csv)",
+        required=True,
+        help="Path to a raw reviews file (CSV or JSONL)",
     )
     parser.add_argument(
         "--output-path",

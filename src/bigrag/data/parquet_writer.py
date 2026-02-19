@@ -68,21 +68,20 @@ def write_parquet_fractions(
 
 
 def write_parquet(
-    csv_path: str | Path,
+    data_path: str | Path,
     embeddings_path: str | Path,
     output_path: str | Path,
 ) -> Path:
-    """Backward-compatible wrapper for the CLI script."""
-    source_csv = Path(csv_path).expanduser().resolve()
+    """CLI-facing wrapper that accepts CSV or JSONL input."""
+    from bigrag.data.schema import load_raw_dataframe
+
     source_embeddings = Path(embeddings_path).expanduser().resolve()
     target = Path(output_path).expanduser().resolve()
 
-    if not source_csv.exists():
-        raise FileNotFoundError(f"Input CSV does not exist: {source_csv}")
     if not source_embeddings.exists():
         raise FileNotFoundError(f"Embeddings file does not exist: {source_embeddings}")
 
-    raw_df = pd.read_csv(source_csv)
+    raw_df = load_raw_dataframe(data_path)
     cleaned_df, _ = validate_dataframe(raw_df)
     embeddings = np.load(source_embeddings)
 

@@ -17,14 +17,18 @@ spark:
   app_name: "BigRAG-Cinema-Local"
 
   driver:
-    memory: "4g"
+    memory: "8g"
     cores: 2
-    max_result_size: "2g"
+    max_result_size: "4g"
 
   executor:
-    memory: "4g"
+    memory: "8g"
     cores: 2
     instances: 1          # ignored in local mode, kept for schema parity
+
+  memory:
+    fraction: 0.8              # default 0.6 — raise for large cached DataFrames
+    storage_fraction: 0.5      # within the 0.8, half reserved for caching
 
   sql:
     shuffle_partitions: 8               # small value for local runs

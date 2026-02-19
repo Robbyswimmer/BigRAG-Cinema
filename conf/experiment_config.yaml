@@ -1,66 +1,37 @@
 # =============================================================================
 # BigRAG Cinema -- Experiment Configuration
 # =============================================================================
-# Central place to define every tuneable knob for benchmark runs.
-# Loaded by scripts/run_benchmarks.py (and any notebook that imports the
-# experiment harness).
-# =============================================================================
 
 # ---- Dataset -----------------------------------------------------------------
-# Fractions of the full dataset to benchmark against.  Each fraction produces
-# its own set of timing / quality measurements so we can plot scale curves.
 dataset:
-  source_path: "data/processed/reviews.parquet"
-  fractions: [0.01, 0.05, 0.1, 0.25, 0.5, 1.0]
+  source_path: "data/parquet/All_Beauty.parquet"
+  fractions: [0.10, 0.25, 0.50, 0.75, 1.0]
 
 # ---- Embedding model ---------------------------------------------------------
 embedding:
-  model_name: "all-MiniLM-L6-v2"        # HuggingFace sentence-transformers ID
-  dimension: 384                         # output vector length
-  batch_size: 256                        # encode batch size on driver
-  normalize: true                        # L2-normalize vectors before storage
+  model_name: "all-MiniLM-L6-v2"
+  dimension: 384
+  batch_size: 512
+  normalize: true
 
 # ---- Query workload ----------------------------------------------------------
 queries:
-  num_queries: 50                        # how many random queries per run
-  seed: 42                               # reproducibility
-  query_source: "data/sample_queries.txt"  # one natural-language query per line
+  num_queries: 50
+  seed: 42
 
 # ---- Retrieval strategies to compare ----------------------------------------
-# Each strategy is executed for every (fraction, num_queries) combination.
 strategies:
   - name: "filter_first"
-    description: "Apply metadata filters before vector search"
-    top_k: 10
-
   - name: "vector_first"
-    description: "Run vector search globally, then apply metadata filters"
-    top_k: 10
-
   - name: "hybrid_parallel"
-    description: "Run filter-first and vector-first paths then merge"
-    top_k: 10
-
   - name: "adaptive"
-    description: "Heuristic strategy selection at runtime"
-    top_k: 10
-
-# ---- Evaluation metrics ------------------------------------------------------
-metrics:
-  - "latency_ms"          # wall-clock time for the retrieval call
-  - "precision_at_k"      # overlap with brute-force ground truth
-  - "recall_at_k"
-  - "throughput_qps"       # queries per second
 
 # ---- Output ------------------------------------------------------------------
 output:
-  results_dir: "results/"
-  plots_dir: "results/plots/"
-  save_raw_results: true
-  file_format: "parquet"    # parquet | csv
+  results_dir: "results/raw_metrics"
 
 # ---- Misc --------------------------------------------------------------------
 misc:
-  num_repetitions: 3        # repeat each (strategy, fraction) combo for stability
-  warm_up_runs: 1           # discarded runs before timing starts
+  num_repetitions: 1
+  warm_up_runs: 2
   log_level: "INFO"

@@ -11,12 +11,14 @@ import random
 
 
 QUERY_TEMPLATES = [
-    "great visuals and soundtrack",
-    "slow pacing and weak plot",
-    "emotional character development",
-    "family friendly movie night",
-    "dark thriller with twists",
-    "best acting performance",
+    "excellent product works great",
+    "terrible quality broke after one use",
+    "good value for the price",
+    "amazing gift for birthday",
+    "disappointing not as described",
+    "perfect exactly what I needed",
+    "best purchase I have made",
+    "waste of money do not buy",
 ]
 
 USER_POOL = [f"user_{i:04d}" for i in range(1, 501)]

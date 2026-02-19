@@ -43,6 +43,12 @@ def parse_args():
         default=None,
         help="Number of queries to run (default: from config)",
     )
+    parser.add_argument(
+        "--num-reps",
+        type=int,
+        default=None,
+        help="Number of repetitions per strategy/fraction (default: from config)",
+    )
     return parser.parse_args()
 
 
@@ -55,4 +61,5 @@ if __name__ == "__main__":
         output_dir=args.output_dir,
         strategies=args.strategies,
         num_queries=args.num_queries,
+        num_repetitions=args.num_reps,
     )

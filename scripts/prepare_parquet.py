@@ -20,10 +20,10 @@ def parse_args():
         description="Prepare Parquet files from raw data and embeddings."
     )
     parser.add_argument(
-        "--csv-path",
+        "--data-path",
         type=str,
-        default="data/raw/Reviews.csv",
-        help="Path to the raw reviews CSV (default: data/raw/Reviews.csv)",
+        required=True,
+        help="Path to the raw reviews file (CSV or JSONL)",
     )
     parser.add_argument(
         "--embeddings-path",
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     from bigrag.data.parquet_writer import write_parquet
 
     write_parquet(
-        csv_path=args.csv_path,
+        data_path=args.data_path,
         embeddings_path=args.embeddings_path,
         output_path=args.output_path,
     )

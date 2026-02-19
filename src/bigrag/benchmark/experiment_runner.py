@@ -10,6 +10,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from tqdm import tqdm
+
 from bigrag.benchmark.metrics_collector import MetricsCollector
 from bigrag.benchmark.spark_metrics import collect_spark_metrics
 from bigrag.benchmark.timer import Timer
@@ -18,6 +20,7 @@ from bigrag.data.embedder import generate_embeddings
 from bigrag.engine.metadata_filter import build_filters
 from bigrag.engine.spark_session import create_spark_session
 from bigrag.strategies.registry import STRATEGY_REGISTRY, get_strategy
+from pyspark import StorageLevel
 from bigrag.utils.config import load_config
 from bigrag.utils.io import save_json
 
@@ -140,6 +143,11 @@ def run_experiment(config: dict) -> dict:
             "strategies": {},
         }
 
+        total_measured = (
+            len(supported_names) * len(fractions) * num_repetitions * num_queries
+        )
+        pbar = tqdm(total=total_measured, desc="Benchmark", unit="query")
+
         for strategy_name in supported_names:
             strategy_obj = get_strategy(strategy_name)
             strategy_entry: dict[str, Any] = {"fractions": {}}
@@ -147,7 +155,12 @@ def run_experiment(config: dict) -> dict:
                 collector = MetricsCollector()
                 frac_value = float(frac)
                 frac_rows = max(1, int(total_rows * frac_value))
-                df = full_df.limit(frac_rows).cache()
+
+                pbar.set_description(
+                    f"{strategy_name} | {frac_value:.0%} ({frac_rows:,} rows)"
+                )
+
+                df = full_df.limit(frac_rows).persist(StorageLevel.MEMORY_AND_DISK)
                 df.count()
 
                 for repetition_id in range(num_repetitions):
@@ -204,6 +217,7 @@ def run_experiment(config: dict) -> dict:
                                 ),
                             },
                         )
+                        pbar.update(1)
 
                 fraction_key = f"{frac_value:.4f}"
                 fraction_summary = collector.summarize()
@@ -224,6 +238,9 @@ def run_experiment(config: dict) -> dict:
                 "anomalies": strategy_anomalies,
             }
             results["strategies"][strategy_name] = strategy_entry
+
+        pbar.set_description("Benchmark complete")
+        pbar.close()
 
         expected_records_per_fraction = num_queries * num_repetitions
         completeness_issues: list[str] = []
@@ -254,6 +271,7 @@ def run_experiments(
     output_dir: str | None = None,
     strategies: list[str] | None = None,
     num_queries: int | None = None,
+    num_repetitions: int | None = None,
 ) -> dict:
     """CLI-facing wrapper used by scripts/run_benchmarks.py."""
     config = load_config(Path(config_path))
@@ -265,4 +283,7 @@ def run_experiments(
     if num_queries is not None:
         config.setdefault("queries", {})
         config["queries"]["num_queries"] = int(num_queries)
+    if num_repetitions is not None:
+        config.setdefault("misc", {})
+        config["misc"]["num_repetitions"] = int(num_repetitions)
     return run_experiment(config)

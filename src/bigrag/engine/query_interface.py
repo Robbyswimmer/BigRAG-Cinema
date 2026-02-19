@@ -20,8 +20,10 @@ if TYPE_CHECKING:
     from pyspark.sql import DataFrame, SparkSession
 
 DEFAULT_DATA_PATHS = (
+    Path("data/parquet/All_Beauty.parquet"),
+    Path("data/parquet/Digital_Music.parquet"),
+    Path("data/parquet/Video_Games.parquet"),
     Path("data/processed/reviews.parquet"),
-    Path("data/movies_with_embeddings.parquet"),
 )
 
 

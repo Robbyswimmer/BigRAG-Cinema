@@ -38,6 +38,12 @@ def parse_args():
         default="png",
         help="Output figure format (default: png)",
     )
+    parser.add_argument(
+        "--label",
+        type=str,
+        default=None,
+        help="Dataset label for figure titles (e.g. 'Digital_Music')",
+    )
     return parser.parse_args()
 
 
@@ -49,4 +55,5 @@ if __name__ == "__main__":
         metrics_dir=args.metrics_dir,
         output_dir=args.output_dir,
         fmt=args.format,
+        label=args.label,
     )

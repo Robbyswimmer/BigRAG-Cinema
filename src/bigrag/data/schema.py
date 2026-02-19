@@ -36,3 +36,32 @@ EXPECTED_COLUMNS: list = [
     COL_HELPFUL_VOTE,
     COL_VERIFIED_PURCHASE,
 ]
+
+# Columns present in raw JSONL that we drop during validation.
+JSONL_DROP_COLUMNS: list = ["images"]
+
+
+def load_raw_dataframe(path):
+    """Load a raw review file (CSV or JSONL) into a pandas DataFrame."""
+    import pandas as pd
+    from pathlib import Path
+
+    p = Path(path).expanduser().resolve()
+    if not p.exists():
+        raise FileNotFoundError(f"Data file not found: {p}")
+
+    suffix = p.suffix.lower()
+    if suffix in (".jsonl", ".json"):
+        # Prevent pandas from auto-converting timestamps to datetime64.
+        df = pd.read_json(p, lines=True, convert_dates=False)
+    elif suffix == ".csv":
+        df = pd.read_csv(p)
+    else:
+        raise ValueError(f"Unsupported file format: {suffix}")
+
+    # Drop columns we don't need (e.g. images).
+    for col in JSONL_DROP_COLUMNS:
+        if col in df.columns:
+            df = df.drop(columns=[col])
+
+    return df
