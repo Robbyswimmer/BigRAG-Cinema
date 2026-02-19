@@ -1,0 +1,28 @@
+# Benchmark config -- Video_Games (large, ~4.6M rows)
+dataset:
+  source_path: "data/parquet/Video_Games.parquet"
+  fractions: [0.10, 0.25, 0.50, 0.75, 1.0]
+
+embedding:
+  model_name: "all-MiniLM-L6-v2"
+  dimension: 384
+  batch_size: 512
+  normalize: true
+
+queries:
+  num_queries: 50
+  seed: 42
+
+strategies:
+  - name: "filter_first"
+  - name: "vector_first"
+  - name: "hybrid_parallel"
+  - name: "adaptive"
+
+output:
+  results_dir: "results/raw_metrics/video_games"
+
+misc:
+  num_repetitions: 1
+  warm_up_runs: 2
+  log_level: "INFO"
