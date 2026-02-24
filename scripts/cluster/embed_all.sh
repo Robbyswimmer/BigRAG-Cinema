@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 #SBATCH --job-name=bigrag-embed-all
-#SBATCH --partition=batch
+#SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=4
 #SBATCH --time=48:00:00
-#SBATCH --output=logs/embed_all_%j.out
-#SBATCH --error=logs/embed_all_%j.err
+#SBATCH --chdir=/data/SalmanAsif/RobbyMoseley/rag/BigRAG-Cinema
+#SBATCH --output=/data/SalmanAsif/RobbyMoseley/rag/BigRAG-Cinema/logs/embed_all_%j.out
+#SBATCH --error=/data/SalmanAsif/RobbyMoseley/rag/BigRAG-Cinema/logs/embed_all_%j.err
 #
 # Generate embeddings for ALL 34 Amazon Reviews categories in one GPU job.
 # Usage:  sbatch scripts/cluster/embed_all.sh
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+PROJECT_DIR="/data/SalmanAsif/RobbyMoseley/rag/BigRAG-Cinema"
 cd "$PROJECT_DIR"
 
 eval "$(conda shell.bash hook)"
