@@ -1,0 +1,38 @@
+profile_name: slurm_node
+description: "Single SLURM node — Spark local[*] using all allocated CPUs"
+
+spark:
+  master: "local[*]"
+  app_name: "BigRAG-Cinema-SLURM"
+  driver:
+    memory: "48g"
+    cores: 16
+    max_result_size: "8g"
+  executor:
+    memory: "48g"
+    cores: 16
+    instances: 1
+  memory:
+    fraction: 0.8
+    storage_fraction: 0.5
+  sql:
+    shuffle_partitions: 16
+    adaptive_enabled: true
+    parquet_compression: "snappy"
+    arrow_enabled: true
+  serializer: "org.apache.spark.serializer.KryoSerializer"
+  default_parallelism: 16
+  ui:
+    enabled: false
+    port: 4040
+  event_log:
+    enabled: false
+    dir: "/tmp/spark-events"
+
+resource_limits:
+  max_driver_memory_gb: 48
+  max_total_cores: 16
+
+extra_java_options: >-
+  -XX:+UseG1GC
+  -XX:InitiatingHeapOccupancyPercent=35
