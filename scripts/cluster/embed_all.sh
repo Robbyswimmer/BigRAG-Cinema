@@ -2,7 +2,7 @@
 #SBATCH --job-name=bigrag-embed-all
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --mem=64G
+#SBATCH --mem=128G
 #SBATCH --cpus-per-task=4
 #SBATCH --time=48:00:00
 #SBATCH --chdir=/data/SalmanAsif/RobbyMoseley/rag/BigRAG-Cinema
@@ -83,9 +83,10 @@ for i in "${!CATEGORIES[@]}"; do
     fi
 
     echo "[$num/$TOTAL] $cat — generating embeddings..."
-    python scripts/generate_embeddings.py \
+    python scripts/cluster/chunked_embed.py \
         --input-path "$INPUT" \
-        --output-path "$OUTPUT"
+        --output-path "$OUTPUT" \
+        --chunk-size 500000
     echo "  Done: $OUTPUT"
 done
 
