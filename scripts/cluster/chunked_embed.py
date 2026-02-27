@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Memory-efficient embedding generation that processes JSONL in chunks.
 
-Reads the input file in chunks to avoid loading the entire dataset into RAM,
-generates embeddings per chunk, and concatenates at the end.
+Writes each chunk's embeddings to a memory-mapped file on disk, so RAM
+usage stays constant regardless of dataset size.
 
 Usage:
     python scripts/cluster/chunked_embed.py \
@@ -41,6 +41,15 @@ def parse_args():
     return parser.parse_args()
 
 
+def count_lines(path):
+    """Count lines without loading file into memory."""
+    count = 0
+    with open(path, "rb") as f:
+        for _ in f:
+            count += 1
+    return count
+
+
 def main():
     args = parse_args()
     input_path = Path(args.input_path)
@@ -58,11 +67,20 @@ def main():
 
     # Count total lines for progress
     print(f"Counting lines in {input_path} ...")
-    total_lines = sum(1 for _ in open(input_path))
+    total_lines = count_lines(input_path)
     print(f"  Total lines: {total_lines:,}")
 
-    # Process in chunks
-    chunk_embeddings = []
+    # Pre-allocate a memory-mapped .npy file on disk.
+    # This avoids holding all embeddings in RAM.
+    print(f"Pre-allocating output file ({total_lines:,} x {EMBEDDING_DIM}) ...")
+    mmap_path = output_path
+    fp = np.lib.format.open_memmap(
+        str(mmap_path), mode="w+", dtype=np.float32,
+        shape=(total_lines, EMBEDDING_DIM),
+    )
+    # We'll track the actual write offset since validation may drop rows
+    write_offset = 0
+
     rows_done = 0
     chunk_num = 0
     t_start = time.perf_counter()
@@ -90,8 +108,9 @@ def main():
             print(f"  Chunk {chunk_num}: 0 valid texts, skipping")
             continue
 
-        print(f"  Chunk {chunk_num}: encoding {len(texts):,} texts "
-              f"({rows_done + len(texts):,}/{total_lines:,}) ...")
+        n_texts = len(texts)
+        print(f"  Chunk {chunk_num}: encoding {n_texts:,} texts "
+              f"({rows_done + n_texts:,}/{total_lines:,}) ...")
 
         emb = model.encode(
             texts,
@@ -101,10 +120,12 @@ def main():
             normalize_embeddings=True,
         ).astype(np.float32)
 
-        chunk_embeddings.append(emb)
-        rows_done += len(texts)
+        # Write directly to memory-mapped file
+        fp[write_offset:write_offset + n_texts] = emb
+        write_offset += n_texts
+        rows_done += n_texts
 
-        # Free texts
+        # Free chunk data from RAM
         del texts, emb
         gc.collect()
 
@@ -112,17 +133,24 @@ def main():
         rate = rows_done / elapsed if elapsed > 0 else 0
         print(f"    {rows_done:,} rows done in {elapsed:.0f}s ({rate:,.0f} texts/sec)")
 
-    # Concatenate all chunks
-    print("Concatenating embeddings ...")
-    all_embeddings = np.concatenate(chunk_embeddings, axis=0)
-    del chunk_embeddings
+    # Flush memory-mapped file
+    del fp
     gc.collect()
 
-    # Save
-    np.save(output_path, all_embeddings)
+    # If rows were dropped during validation, truncate the file to actual size
+    if write_offset < total_lines:
+        print(f"Trimming output from {total_lines:,} to {write_offset:,} rows "
+              f"({total_lines - write_offset:,} dropped during validation) ...")
+        full = np.load(str(output_path), mmap_mode="r")
+        trimmed = np.array(full[:write_offset])
+        del full
+        np.save(str(output_path), trimmed)
+        del trimmed
+        gc.collect()
+
     size_mb = output_path.stat().st_size / 1e6
     elapsed = time.perf_counter() - t_start
-    print(f"\nDone: {all_embeddings.shape[0]:,} embeddings -> {output_path} "
+    print(f"\nDone: {write_offset:,} embeddings -> {output_path} "
           f"({size_mb:.1f} MB) in {elapsed:.0f}s")
 
 
