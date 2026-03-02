@@ -86,7 +86,7 @@ for i in "${!CATEGORIES[@]}"; do
     python scripts/cluster/chunked_embed.py \
         --input-path "$INPUT" \
         --output-path "$OUTPUT" \
-        --chunk-size 500000
+        --chunk-size 200000
     echo "  Done: $OUTPUT"
 done
 
