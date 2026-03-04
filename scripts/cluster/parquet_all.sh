@@ -3,7 +3,7 @@
 #SBATCH --partition=batch
 #SBATCH --mem=64G
 #SBATCH --cpus-per-task=4
-#SBATCH --time=48:00:00
+#SBATCH --time=72:00:00
 #SBATCH --chdir=/data/SalmanAsif/RobbyMoseley/rag/BigRAG-Cinema
 #SBATCH --output=/data/SalmanAsif/RobbyMoseley/rag/BigRAG-Cinema/logs/parquet_all_%j.out
 #SBATCH --error=/data/SalmanAsif/RobbyMoseley/rag/BigRAG-Cinema/logs/parquet_all_%j.err

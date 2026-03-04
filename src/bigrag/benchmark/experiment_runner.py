@@ -98,7 +98,11 @@ def run_experiment(config: dict) -> dict:
         Nested results structure keyed by strategy name and fraction,
         containing raw and summary metrics.
     """
-    profile_path = Path(config.get("profile_path", "conf/cluster_profiles/local.yaml"))
+    import os
+    profile_path = Path(
+        os.environ.get("BIGRAG_CLUSTER_PROFILE")
+        or config.get("profile_path", "conf/cluster_profiles/local.yaml")
+    )
     source_path = _resolve_source_path(config)
     if not source_path.exists():
         raise FileNotFoundError(f"Dataset parquet not found: {source_path}")
@@ -214,6 +218,15 @@ def run_experiment(config: dict) -> dict:
                                 "result_count": float(result_count),
                                 "active_stage_count": float(
                                     spark_metrics.get("active_stage_count", 0)
+                                ),
+                                "shuffle_read_bytes": float(
+                                    spark_metrics.get("shuffle_read_bytes", 0)
+                                ),
+                                "shuffle_write_bytes": float(
+                                    spark_metrics.get("shuffle_write_bytes", 0)
+                                ),
+                                "total_tasks": float(
+                                    spark_metrics.get("total_tasks", 0)
                                 ),
                             },
                         )
