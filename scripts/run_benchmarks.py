@@ -28,8 +28,8 @@ def parse_args():
     parser.add_argument(
         "--output-dir",
         type=str,
-        default="results/raw_metrics",
-        help="Directory to save raw benchmark metrics (default: results/raw_metrics)",
+        default=None,
+        help="Directory to save raw benchmark metrics (default: from config)",
     )
     parser.add_argument(
         "--strategies",
