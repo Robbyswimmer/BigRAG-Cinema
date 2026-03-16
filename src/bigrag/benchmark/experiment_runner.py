@@ -13,7 +13,7 @@ from typing import Any
 from tqdm import tqdm
 
 from bigrag.benchmark.metrics_collector import MetricsCollector
-from bigrag.benchmark.spark_metrics import collect_spark_metrics
+from bigrag.benchmark.spark_metrics import ShuffleTracker, collect_spark_metrics
 from bigrag.benchmark.timer import Timer
 from bigrag.benchmark.workload_generator import generate_workload
 from bigrag.data.embedder import generate_embeddings
@@ -152,6 +152,8 @@ def run_experiment(config: dict) -> dict:
         )
         pbar = tqdm(total=total_measured, desc="Benchmark", unit="query")
 
+        shuffle_tracker = ShuffleTracker(spark)
+
         for strategy_name in supported_names:
             strategy_obj = get_strategy(strategy_name)
             strategy_entry: dict[str, Any] = {"fractions": {}}
@@ -193,6 +195,7 @@ def run_experiment(config: dict) -> dict:
                             score_range=query.get("score_range"),
                             user_ids=query.get("user_ids"),
                         )
+                        shuffle_tracker.snapshot()
                         with Timer() as timer:
                             out = strategy_obj.execute(
                                 spark=spark,
@@ -207,6 +210,7 @@ def run_experiment(config: dict) -> dict:
                         throughput_qps = (
                             0.0 if timer.elapsed_s <= 0 else 1.0 / timer.elapsed_s
                         )
+                        shuffle_delta = shuffle_tracker.delta()
                         spark_metrics = collect_spark_metrics(spark)
                         collector.record(
                             query_id=query_id,
@@ -220,13 +224,13 @@ def run_experiment(config: dict) -> dict:
                                     spark_metrics.get("active_stage_count", 0)
                                 ),
                                 "shuffle_read_bytes": float(
-                                    spark_metrics.get("shuffle_read_bytes", 0)
+                                    shuffle_delta.get("shuffle_read_bytes", 0)
                                 ),
                                 "shuffle_write_bytes": float(
-                                    spark_metrics.get("shuffle_write_bytes", 0)
+                                    shuffle_delta.get("shuffle_write_bytes", 0)
                                 ),
                                 "total_tasks": float(
-                                    spark_metrics.get("total_tasks", 0)
+                                    shuffle_delta.get("total_tasks", 0)
                                 ),
                             },
                         )

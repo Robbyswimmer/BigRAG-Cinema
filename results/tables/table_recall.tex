@@ -1,0 +1,23 @@
+\begin{table*}[ht]
+\centering
+\small
+\begin{tabular}{lrrr}
+\hline
+Strategy & All Beauty & Digital Music & Mean \\
+\hline
+Filter-First & \textbf{1.0000} & \textbf{1.0000} & \textbf{1.0000} \\
+Vector-First & 0.8100 & 0.9700 & 0.8900 \\
+Hybrid Parallel & \textbf{1.0000} & \textbf{1.0000} & \textbf{1.0000} \\
+Adaptive & \textbf{1.0000} & \textbf{1.0000} & \textbf{1.0000} \\
+\hline
+\multicolumn{4}{l}{\textit{By Selectivity Bucket (first dataset)}} \\
+\hline
+Filter-First & Low: 1.0 & Med: 1.0 & High: 1.0 \\
+Vector-First & Low: 1.0 & Med: 1.0 & High: 0.3667 \\
+Hybrid Parallel & Low: 1.0 & Med: 1.0 & High: 1.0 \\
+Adaptive & Low: 1.0 & Med: 1.0 & High: 1.0 \\
+\hline
+\end{tabular}
+\caption{Recall@10 per strategy. Filter-First serves as ground truth (recall=1.0). Bold indicates perfect recall.}
+\label{tab:recall-at-10}
+\end{table*}

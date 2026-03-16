@@ -1,0 +1,17 @@
+\begin{table*}[ht]
+\centering
+\small
+\begin{tabular}{lrrrrrrrrrr}
+\hline
+Strategy & \multicolumn{2}{c}{All Beauty} & \multicolumn{2}{c}{Amazon Fashion} & \multicolumn{2}{c}{Appliances} & \multicolumn{2}{c}{Arts \& Crafts} & \multicolumn{2}{c}{Baby Products} \\
+ & 10\% (ms) & Factor & 10\% (ms) & Factor & 10\% (ms) & Factor & 10\% (ms) & Factor & 10\% (ms) & Factor \\
+\hline
+Filter-First & 173 & 7.2$\times$ & 484 & 9.6$\times$ & 423 & 8.8$\times$ & 1,595 & 10.7$\times$ & 1,193 & 10.9$\times$ \\
+Vector-First & 1,380 & 9.7$\times$ & 4,820 & 10.0$\times$ & 4,133 & 9.9$\times$ & 17,031 & 10.1$\times$ & 11,601 & 10.3$\times$ \\
+Hybrid Parallel & 1,407 & 9.5$\times$ & 4,839 & 9.9$\times$ & 4,149 & 9.8$\times$ & 17,134 & 10.0$\times$ & 11,595 & 10.0$\times$ \\
+Adaptive & 199 & 6.5$\times$ & 508 & 8.9$\times$ & 448 & 8.3$\times$ & 1,645 & 10.1$\times$ & 1,172 & 10.7$\times$ \\
+\hline
+\end{tabular}
+\caption{Scalability analysis: median latency at 10\% data fraction and growth factor to full scale (100\%). Lower factor = better scalability.}
+\label{tab:scalability}
+\end{table*}

@@ -1,0 +1,106 @@
+[
+  {
+    "dataset": "All_Beauty",
+    "total_rows": 693548,
+    "num_queries": 10,
+    "top_k": 10,
+    "strategies": {
+      "filter_first": {
+        "mean_recall": 1.0,
+        "min_recall": 1.0,
+        "max_recall": 1.0,
+        "num_queries": 10,
+        "by_selectivity": {
+          "low": 1.0,
+          "medium": 1.0,
+          "high": 1.0
+        }
+      },
+      "vector_first": {
+        "mean_recall": 0.81,
+        "min_recall": 0.0,
+        "max_recall": 1.0,
+        "num_queries": 10,
+        "by_selectivity": {
+          "low": 1.0,
+          "medium": 1.0,
+          "high": 0.3667
+        }
+      },
+      "hybrid_parallel": {
+        "mean_recall": 1.0,
+        "min_recall": 1.0,
+        "max_recall": 1.0,
+        "num_queries": 10,
+        "by_selectivity": {
+          "low": 1.0,
+          "medium": 1.0,
+          "high": 1.0
+        }
+      },
+      "adaptive": {
+        "mean_recall": 1.0,
+        "min_recall": 1.0,
+        "max_recall": 1.0,
+        "num_queries": 10,
+        "by_selectivity": {
+          "low": 1.0,
+          "medium": 1.0,
+          "high": 1.0
+        }
+      }
+    }
+  },
+  {
+    "dataset": "Digital_Music",
+    "total_rows": 128715,
+    "num_queries": 10,
+    "top_k": 10,
+    "strategies": {
+      "filter_first": {
+        "mean_recall": 1.0,
+        "min_recall": 1.0,
+        "max_recall": 1.0,
+        "num_queries": 10,
+        "by_selectivity": {
+          "low": 1.0,
+          "medium": 1.0,
+          "high": 1.0
+        }
+      },
+      "vector_first": {
+        "mean_recall": 0.97,
+        "min_recall": 0.7,
+        "max_recall": 1.0,
+        "num_queries": 10,
+        "by_selectivity": {
+          "low": 1.0,
+          "medium": 1.0,
+          "high": 0.9
+        }
+      },
+      "hybrid_parallel": {
+        "mean_recall": 1.0,
+        "min_recall": 1.0,
+        "max_recall": 1.0,
+        "num_queries": 10,
+        "by_selectivity": {
+          "low": 1.0,
+          "medium": 1.0,
+          "high": 1.0
+        }
+      },
+      "adaptive": {
+        "mean_recall": 1.0,
+        "min_recall": 1.0,
+        "max_recall": 1.0,
+        "num_queries": 10,
+        "by_selectivity": {
+          "low": 1.0,
+          "medium": 1.0,
+          "high": 1.0
+        }
+      }
+    }
+  }
+]

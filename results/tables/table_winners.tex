@@ -1,0 +1,18 @@
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{llllll}
+\hline
+Metric & All Beauty & Amazon Fashion & Appliances & Arts \& Crafts & Baby Products \\
+\hline
+Median Latency & Filter-First & Adaptive & Filter-First & Adaptive & Adaptive \\
+P99 Latency & Filter-First & Filter-First & Filter-First & Filter-First & Filter-First \\
+Mean Throughput & Filter-First & Adaptive & Filter-First & Adaptive & Adaptive \\
+Latency Variance & Vector-First & Vector-First & Hybrid Parallel & Vector-First & Hybrid Parallel \\
+\hline
+\textbf{Total Wins} & Filter-First (3/4) & Adaptive (2/4) & Filter-First (3/4) & Adaptive (2/4) & Adaptive (2/4) \\
+\hline
+\end{tabular}
+\caption{Best-performing strategy per dataset at full scale. Latency Variance measured as P99/P50 ratio (lower = more consistent).}
+\label{tab:winners}
+\end{table}

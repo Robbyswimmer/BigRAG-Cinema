@@ -440,7 +440,9 @@ def plot_cross_dataset_throughput(
     n_ds = len(datasets)
     width = 0.8 / n_ds
     x = np.arange(len(strat_labels))
-    ds_colors = ["#42A5F5", "#66BB6A", "#EF5350", "#AB47BC"]
+    # Use a colormap that scales to any number of datasets
+    cmap = plt.cm.get_cmap("tab10", max(n_ds, 3))
+    ds_colors = [cmap(i) for i in range(n_ds)]
 
     for i, ds in enumerate(datasets):
         subset = df[df["Dataset"] == ds]
